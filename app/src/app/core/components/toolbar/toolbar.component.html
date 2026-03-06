@@ -7,7 +7,7 @@
     >
     
     <span class="font-bold text-slate-700 tracking-wide text-sm">
-      ADMINISTRADOR
+      {{ userName }}
     </span>
   </div>
 
@@ -15,13 +15,13 @@
 
   <div class="flex items-center gap-1">
     
-    <button mat-icon-button aria-label="Inicio" class="text-slate-600 hover:bg-white/60 transition-colors">
+    <button mat-icon-button aria-label="Inicio" class="text-slate-600 hover:bg-white/60 transition-colors" routerLink="/">
       <mat-icon>home</mat-icon>
     </button>
 
     <div class="h-5 w-px bg-slate-300 mx-1 hidden sm:block"></div>
 
-    <button mat-icon-button aria-label="Cerrar Sesión" class="text-slate-600 hover:text-red-600 hover:bg-red-50 transition-colors">
+    <button mat-icon-button aria-label="Cerrar Sesión" class="text-slate-600 hover:text-red-600 hover:bg-red-50 transition-colors" (click)="logout()">
       <mat-icon>logout</mat-icon>
     </button>
 

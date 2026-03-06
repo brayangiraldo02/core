@@ -6,28 +6,40 @@ import os
 
 load_dotenv()
 
-# Establece una clave secreta
 SECRET_KEY = os.getenv('SECRET_KEY_JWT')
+REFRESH_SECRET_KEY = os.getenv('SECRET_KEY_REFRESH')
 ALGORITHM = "HS256"
 
-def encode_jwt(user_data: Dict) -> str:
-    """Codifica un token JWT basado en los datos del usuario"""
-    payload = {
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=600),  # Token expira en 10 horas
+def create_access_token(data: Dict) -> str:
+    payload = data.copy()
+    payload.update({
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10),
         "iat": datetime.datetime.utcnow(),
-        "user_data": user_data
-    }
+        "type": "access"
+    })
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def decode_jwt(token: str) -> dict:
-    """Decodifica un token JWT para obtener los datos del usuario"""
+def create_refresh_token(data: Dict) -> str:
+    payload = data.copy()
+    payload.update({
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=600),
+        "iat": datetime.datetime.utcnow(),
+        "type": "refresh"
+    })
+    return jwt.encode(payload, REFRESH_SECRET_KEY, algorithm=ALGORITHM)
+
+def decode_access_token(token: str) -> dict:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload["user_data"]
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
         return {"error": "Token expired"}
     except jwt.InvalidTokenError:
         return {"error": "Invalid token"}
 
-def create_token(data: Dict, secret: str = SECRET_KEY) -> str:
-    return encode_jwt(user_data=data)
+def decode_refresh_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        return {"error": "Token expired"}
+    except jwt.InvalidTokenError:
+        return {"error": "Invalid token"}

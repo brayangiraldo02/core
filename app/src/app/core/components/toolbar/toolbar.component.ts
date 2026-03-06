@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -6,4 +7,14 @@ import { Component } from '@angular/core';
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.css',
 })
-export class ToolbarComponent {}
+export class ToolbarComponent {
+  private authService = inject(AuthService);
+
+  get userName(): string {
+    return this.authService.user?.nombre?.toUpperCase() || 'ADMINISTRADOR';
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+}
