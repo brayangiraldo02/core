@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Header</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #333;
+      }
+
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 10px;
+      }
+
+      .logo-cell {
+        width: 35%;
+        vertical-align: middle;
+      }
+
+      .company-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: #2b3a4a;
+        letter-spacing: -0.5px;
+      }
+
+      .company-subtitle {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 2px;
+      }
+
+      .title-cell {
+        width: 35%;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .title-cell h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #1e293b;
+        text-transform: uppercase;
+      }
+
+      .date-cell {
+        width: 30%;
+        text-align: right;
+        vertical-align: middle;
+      }
+
+      .info-box {
+        display: inline-block;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 6px;
+        padding: 6px 10px;
+        text-align: left;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .info-box .label {
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .header-line {
+        border: none;
+        border-top: 2px solid #3b82f6;
+        margin-top: 12px;
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="header-table">
+      <tr>
+        <td class="logo-cell">
+          <div class="company-name">
+            {{ data_view.get('company_name', 'CORE PLATFORM') }}
+          </div>
+          <div class="company-subtitle">
+            {{ data_view.get('system_name', 'SISTEMA DE GESTION') }}
+          </div>
+        </td>
+
+        <td class="title-cell">
+          <h2>{{ data_view.get('title', 'REPORTE GENERAL') }}</h2>
+        </td>
+
+        <td class="date-cell">
+          <div class="info-box">
+            <div>
+              <span class="label">Fecha:</span> {{ data_view.get('date',
+              '14/08/2026') }}
+            </div>
+            <div>
+              <span class="label">Hora:</span> {{ data_view.get('hour', '12:00
+              PM') }}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <hr class="header-line" />
+  </body>
+</html>

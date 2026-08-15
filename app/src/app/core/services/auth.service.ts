@@ -1,18 +1,18 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, throwError } from 'rxjs';
+import { Observable, tap, catchError, throwError, switchMap } from 'rxjs';
 import { URLBASE } from '../../../environments/environment';
 
 export interface User {
-  id: string;
-  nombre: string;
+  id?: string;
+  name: string;
+  role?: string;
 }
 
 export interface LoginResponse {
   access_token: string;
   refresh_token: string;
-  user: User;
 }
 
 export interface RefreshTokenResponse {
@@ -29,6 +29,8 @@ export class AuthService {
 
   private http = inject(HttpClient);
   private router = inject(Router);
+
+  // ---- Getters ----
 
   get accessToken(): string | null {
     return sessionStorage.getItem(this.ACCESS_TOKEN_KEY);
@@ -47,10 +49,15 @@ export class AuthService {
     return !!this.accessToken;
   }
 
+  // ---- Session Storage ----
+
   private saveSession(response: LoginResponse): void {
     sessionStorage.setItem(this.ACCESS_TOKEN_KEY, response.access_token);
     sessionStorage.setItem(this.REFRESH_TOKEN_KEY, response.refresh_token);
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+  }
+
+  private saveUser(user: User): void {
+    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
   private updateAccessToken(token: string): void {
@@ -63,13 +70,23 @@ export class AuthService {
     sessionStorage.removeItem(this.USER_KEY);
   }
 
-  login(username: string, password: string): Observable<LoginResponse> {
+  // ---- API Methods ----
+
+  login(username: string, password: string): Observable<User> {
     return this.http.post<LoginResponse>(`${URLBASE}/users/login`, { username, password }).pipe(
-      tap((response) => this.saveSession(response)),
+      switchMap((response) => {
+        this.saveSession(response);
+        return this.getUserInfo();
+      }),
+      tap((user) => this.saveUser(user)),
       catchError((error) => {
         return throwError(() => error);
-      })
+      }),
     );
+  }
+
+  getUserInfo(): Observable<User> {
+    return this.http.get<User>(`${URLBASE}/users/info`);
   }
 
   refreshAccessToken(): Observable<RefreshTokenResponse> {
@@ -88,7 +105,7 @@ export class AuthService {
         catchError((error) => {
           this.logout();
           return throwError(() => error);
-        })
+        }),
       );
   }
 

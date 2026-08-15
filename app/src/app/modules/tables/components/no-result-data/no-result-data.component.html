@@ -1,0 +1,20 @@
+<div class="flex flex-col items-center justify-center py-12 px-4 h-full text-center fade-in">
+  <div
+    class="bg-slate-50 rounded-full p-4 mb-4 shadow-sm border border-slate-100 inline-flex items-center justify-center"
+  >
+    <mat-icon class="text-slate-400 text-6xl! w-auto! h-auto! leading-none"> search_off </mat-icon>
+  </div>
+
+  <h3 class="text-slate-700 font-bold text-lg mb-1 tracking-tight">Sin resultados encontrados</h3>
+
+  <p class="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">
+    @if (query()) {
+      No encontramos coincidencias para
+      <span class="font-semibold text-slate-700">"{{ query() }}"</span>.
+    } @else {
+      No hay datos disponibles con los filtros actuales.
+    }
+    <br />
+    Intenta verificar la ortografía o limpiar los filtros.
+  </p>
+</div>

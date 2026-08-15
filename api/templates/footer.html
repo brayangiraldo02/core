@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Footer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      footer {
+        width: 100%;
+        font-size: 11px;
+        color: #64748b;
+      }
+      .footer-line {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin-bottom: 6px;
+      }
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .left-text {
+        float: left;
+      }
+      .right-text {
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <footer>
+      <hr class="footer-line" />
+      <div class="footer-content">
+        <span class="left-text">Core - Sistema Base</span>
+        <span class="right-text"
+          >Generado por: {{ data_view.get('user', 'Administrador') }}</span
+        >
+      </div>
+    </footer>
+  </body>
+</html>

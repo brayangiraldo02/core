@@ -1,0 +1,135 @@
+<div class="space-y-6">
+  <!-- Tarjeta Informativa -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+    <div class="flex items-start gap-4">
+      <div
+        class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0"
+      >
+        <mat-icon class="scale-125">picture_as_pdf</mat-icon>
+      </div>
+
+      <div class="space-y-1 flex-1">
+        <h3 class="text-xl font-bold text-slate-800">
+          Generador de Reportes PDF con Plantillas HTML
+        </h3>
+        <p class="text-slate-500 text-sm leading-relaxed max-w-2xl">
+          El backend utiliza <strong>Jinja2</strong> para inyectar datos en plantillas HTML con
+          <code>header.html</code> y <code>footer.html</code> reutilizables, convirtiéndolos a PDF
+          mediante <strong>pdfkit</strong> / <strong>wkhtmltopdf</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Botones de Prueba de PDF -->
+    <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div
+        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
+      >
+        <div>
+          <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm mb-1">
+            <mat-icon class="text-base">directions_car</mat-icon>
+            <span>Reporte de Flota</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">
+            Exporta la tabla completa de vehículos con sus seriales y estado GPS.
+          </p>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="loadingEntity() !== null"
+          (click)="generatePdf('vehicles')"
+          class="w-full"
+        >
+          {{ loadingEntity() === 'vehicles' ? 'Generando...' : 'Descargar PDF' }}
+        </button>
+      </div>
+
+      <div
+        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
+      >
+        <div>
+          <div class="flex items-center gap-2 text-blue-600 font-bold text-sm mb-1">
+            <mat-icon class="text-base">groups</mat-icon>
+            <span>Reporte de Clientes</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">
+            Exporta el directorio de propietarios con teléfonos, correos y planes de pago.
+          </p>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="loadingEntity() !== null"
+          (click)="generatePdf('owners')"
+          class="w-full"
+        >
+          {{ loadingEntity() === 'owners' ? 'Generando...' : 'Descargar PDF' }}
+        </button>
+      </div>
+
+      <div
+        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
+      >
+        <div>
+          <div class="flex items-center gap-2 text-amber-600 font-bold text-sm mb-1">
+            <mat-icon class="text-base">inventory_2</mat-icon>
+            <span>Reporte de Inventario</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">
+            Exporta el inventario valorizado con existencias, precios y stock mínimo.
+          </p>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="loadingEntity() !== null"
+          (click)="generatePdf('inventory')"
+          class="w-full"
+        >
+          {{ loadingEntity() === 'inventory' ? 'Generando...' : 'Descargar PDF' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjeta de Instrucciones de Uso -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <h4 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
+      <mat-icon class="text-slate-500">code</mat-icon>
+      <span>¿Cómo crear un nuevo reporte en Core?</span>
+    </h4>
+    <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2 mt-3">
+      <li>
+        Crea tu plantilla HTML en
+        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
+          >core/api/templates/tu_reporte.html</code
+        >
+        utilizando sintaxis Jinja2 (<code>{{ '{{ data_view[\'campo\'] }}' }}</code>).
+      </li>
+      <li>
+        Usa la función
+        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
+          >render_template_to_pdf()</code
+        >
+        en
+        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
+          >core/api/utils/pdf.py</code
+        >
+        pasando el nombre de la plantilla y tu diccionario de datos.
+      </li>
+      <li>
+        Retorna el archivo con
+        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
+          >FileResponse(path, filename, media_type="application/pdf")</code
+        >
+        y limpieza en background.
+      </li>
+      <li>
+        En Angular, usa
+        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600">apiService.getBlob()</code>
+        para recibir el archivo binario y descargarlo en el navegador.
+      </li>
+    </ol>
+  </div>
+</div>

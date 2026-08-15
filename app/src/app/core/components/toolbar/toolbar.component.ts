@@ -11,7 +11,8 @@ export class ToolbarComponent {
   private authService = inject(AuthService);
 
   get userName(): string {
-    return this.authService.user?.nombre?.toUpperCase() || 'ADMINISTRADOR';
+    const u = this.authService.user;
+    return (u?.name || (u as any)?.nombre || 'USUARIO').toUpperCase();
   }
 
   logout(): void {

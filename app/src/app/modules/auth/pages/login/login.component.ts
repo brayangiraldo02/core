@@ -12,8 +12,7 @@ import { SnackbarService } from '../../../../core/services/snackbar.service';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  logoURL =
-    '';
+  logoURL = '';
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -32,9 +31,6 @@ export class LoginComponent {
       return;
     }
 
-    this.router.navigate(['/dashboard']);
-
-    /* 
     this.isLoading = true;
     const { username, password } = this.loginForm.value;
 
@@ -44,16 +40,16 @@ export class LoginComponent {
         finalize(() => {
           this.isLoading = false;
           this.cdr.markForCheck();
-        })
+        }),
       )
       .subscribe({
         next: () => {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.snackbarService.openSnackBar(error.error?.detail || 'Error al iniciar sesión');
+          const message = error.error?.detail || error.error?.message || 'Error al iniciar sesión';
+          this.snackbarService.openSnackBar(message);
         },
       });
-    */
   }
 }

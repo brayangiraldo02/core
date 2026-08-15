@@ -8,7 +8,6 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class ApiService {
-  
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
@@ -31,9 +30,33 @@ export class ApiService {
     });
   }
 
+  getBlob(endpoint: string): Observable<Blob> {
+    let headers = new HttpHeaders();
+    const token = this.authService.accessToken;
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return this.http.get(`${URLBASE}${endpoint}`, {
+      headers: headers,
+      responseType: 'blob',
+    });
+  }
+
   post<T>(endpoint: string, body: unknown): Observable<T> {
     return this.http.post<T>(`${URLBASE}${endpoint}`, body, {
       headers: this.getHeaders(),
+    });
+  }
+
+  postFormData<T>(endpoint: string, formData: FormData): Observable<T> {
+    let headers = new HttpHeaders();
+    const token = this.authService.accessToken;
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return this.http.post<T>(`${URLBASE}${endpoint}`, formData, {
+      headers: headers,
     });
   }
 

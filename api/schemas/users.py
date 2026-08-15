@@ -8,7 +8,11 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
-    user: Dict[str, Any]
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
+class UserInfoResponse(BaseModel):
+    id: str
+    name: str
+    role: Optional[str] = "Usuario"
