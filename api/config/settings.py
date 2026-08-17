@@ -5,6 +5,13 @@ class Settings(BaseSettings):
     SECRET_KEY_JWT: str = "clave_secreta_jwt_core_default_dev_123456"
     SECRET_KEY_REFRESH: str = "clave_secreta_refresh_core_default_dev_123456"
 
+    # Configuración de Cookies de Seguridad
+    COOKIE_SECURE: bool = False  # True en producción con HTTPS
+    COOKIE_SAMESITE: str = "lax"
+    COOKIE_PATH: str = "/users"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 600  # 10 horas
+
     DB_TYPE: Optional[str] = "mysql+pymysql"
     DB_USER: Optional[str] = "root"
     DB_PASSWORD: Optional[str] = ""

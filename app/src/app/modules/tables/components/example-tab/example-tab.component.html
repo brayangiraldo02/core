@@ -1,135 +1,131 @@
-<div class="space-y-6">
-  <!-- Tarjeta Informativa -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-    <div class="flex items-start gap-4">
-      <div
-        class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0"
-      >
-        <mat-icon class="scale-125">picture_as_pdf</mat-icon>
-      </div>
-
-      <div class="space-y-1 flex-1">
-        <h3 class="text-xl font-bold text-slate-800">
-          Generador de Reportes PDF con Plantillas HTML
-        </h3>
-        <p class="text-slate-500 text-sm leading-relaxed max-w-2xl">
-          El backend utiliza <strong>Jinja2</strong> para inyectar datos en plantillas HTML con
-          <code>header.html</code> y <code>footer.html</code> reutilizables, convirtiéndolos a PDF
-          mediante <strong>pdfkit</strong> / <strong>wkhtmltopdf</strong>.
-        </p>
-      </div>
-    </div>
-
-    <!-- Botones de Prueba de PDF -->
-    <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div
-        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
-      >
-        <div>
-          <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm mb-1">
-            <mat-icon class="text-base">directions_car</mat-icon>
-            <span>Reporte de Flota</span>
-          </div>
-          <p class="text-xs text-slate-500 mb-4">
-            Exporta la tabla completa de vehículos con sus seriales y estado GPS.
-          </p>
-        </div>
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="loadingEntity() !== null"
-          (click)="generatePdf('vehicles')"
-          class="w-full"
-        >
-          {{ loadingEntity() === 'vehicles' ? 'Generando...' : 'Descargar PDF' }}
-        </button>
-      </div>
-
-      <div
-        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
-      >
-        <div>
-          <div class="flex items-center gap-2 text-blue-600 font-bold text-sm mb-1">
-            <mat-icon class="text-base">groups</mat-icon>
-            <span>Reporte de Clientes</span>
-          </div>
-          <p class="text-xs text-slate-500 mb-4">
-            Exporta el directorio de propietarios con teléfonos, correos y planes de pago.
-          </p>
-        </div>
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="loadingEntity() !== null"
-          (click)="generatePdf('owners')"
-          class="w-full"
-        >
-          {{ loadingEntity() === 'owners' ? 'Generando...' : 'Descargar PDF' }}
-        </button>
-      </div>
-
-      <div
-        class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50/50 hover:bg-white hover:shadow-md transition-all"
-      >
-        <div>
-          <div class="flex items-center gap-2 text-amber-600 font-bold text-sm mb-1">
-            <mat-icon class="text-base">inventory_2</mat-icon>
-            <span>Reporte de Inventario</span>
-          </div>
-          <p class="text-xs text-slate-500 mb-4">
-            Exporta el inventario valorizado con existencias, precios y stock mínimo.
-          </p>
-        </div>
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="loadingEntity() !== null"
-          (click)="generatePdf('inventory')"
-          class="w-full"
-        >
-          {{ loadingEntity() === 'inventory' ? 'Generando...' : 'Descargar PDF' }}
-        </button>
-      </div>
-    </div>
+<div
+  class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[calc(100vh-21rem)] md:h-[calc(100vh-19rem)]"
+>
+  <!-- 1. Cabecera de búsqueda con debounce automático -->
+  <div
+    class="p-5 border-b border-slate-100 bg-white flex items-center shrink-0 z-20 relative rounded-t-xl"
+  >
+    <app-search-header
+      class="w-full"
+      [initialValue]="currentFilterValue"
+      (search)="applyFilter($event)"
+    >
+    </app-search-header>
   </div>
 
-  <!-- Tarjeta de Instrucciones de Uso -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-    <h4 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
-      <mat-icon class="text-slate-500">code</mat-icon>
-      <span>¿Cómo crear un nuevo reporte en Core?</span>
-    </h4>
-    <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2 mt-3">
-      <li>
-        Crea tu plantilla HTML en
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
-          >core/api/templates/tu_reporte.html</code
+  <!-- 2. Contenedor de la Tabla Material con Loading Overlay -->
+  <div class="flex-1 overflow-hidden p-4 bg-white rounded-b-xl flex flex-col relative">
+    @if (isLoading) {
+      <div class="absolute inset-0 bg-white/50 z-30 flex items-center justify-center">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    <div class="flex-1 overflow-auto rounded-lg border border-slate-100 bg-slate-50 relative">
+      @if (dataSource.data.length > 0) {
+        <table mat-table [dataSource]="dataSource" class="w-full min-w-[800px]">
+          <!-- Columna ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="pl-6 w-24">Código</th>
+            <td mat-cell *matCellDef="let row" class="pl-6 font-semibold text-slate-700">
+              {{ row.id }}
+            </td>
+          </ng-container>
+
+          <!-- Columna Nombre -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre / Descripción</th>
+            <td mat-cell *matCellDef="let row" class="font-medium text-slate-800">
+              {{ row.name }}
+            </td>
+          </ng-container>
+
+          <!-- Columna Categoría -->
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let row" class="text-slate-600">
+              {{ row.category }}
+            </td>
+          </ng-container>
+
+          <!-- Columna Fecha -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>Fecha Registro</th>
+            <td mat-cell *matCellDef="let row" class="text-slate-500">
+              {{ row.created_at }}
+            </td>
+          </ng-container>
+
+          <!-- Columna Estado -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                class="px-2.5 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="
+                  row.status === 'Activo'
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                "
+              >
+                {{ row.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna Acciones -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="pr-6 text-right w-24">Acciones</th>
+            <td mat-cell *matCellDef="let row" class="pr-6 text-right">
+              <button
+                mat-icon-button
+                (click)="openDetails(row)"
+                matTooltip="Ver detalles"
+                class="text-slate-500 hover:text-indigo-600"
+              >
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns"
+            class="bg-slate-50 h-12 sticky top-0 z-10 whitespace-nowrap"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="h-14 hover:bg-slate-100/50 transition-colors border-b border-slate-100 last:border-0 bg-white whitespace-nowrap"
+          ></tr>
+        </table>
+      }
+
+      <!-- 3. Estado Vacío si no hay resultados -->
+      @if (!isLoading && dataSource.data.length === 0 && currentFilterValue) {
+        <div class="h-full flex items-center justify-center bg-white">
+          <app-no-result-data [query]="currentFilterValue"></app-no-result-data>
+        </div>
+      }
+
+      @if (!isLoading && dataSource.data.length === 0 && !currentFilterValue) {
+        <div
+          class="h-full flex items-center justify-center bg-white p-10 text-slate-500 flex-col gap-2"
         >
-        utilizando sintaxis Jinja2 (<code>{{ '{{ data_view[\'campo\'] }}' }}</code>).
-      </li>
-      <li>
-        Usa la función
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
-          >render_template_to_pdf()</code
-        >
-        en
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
-          >core/api/utils/pdf.py</code
-        >
-        pasando el nombre de la plantilla y tu diccionario de datos.
-      </li>
-      <li>
-        Retorna el archivo con
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600"
-          >FileResponse(path, filename, media_type="application/pdf")</code
-        >
-        y limpieza en background.
-      </li>
-      <li>
-        En Angular, usa
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600">apiService.getBlob()</code>
-        para recibir el archivo binario y descargarlo en el navegador.
-      </li>
-    </ol>
+          <mat-icon class="text-slate-300 scale-150 mb-2">table_chart</mat-icon>
+          <p>No hay registros disponibles en este catálogo.</p>
+        </div>
+      }
+    </div>
+
+    <!-- 4. Paginador Material -->
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+      class="mt-4 border-t border-slate-100 pt-2 shrink-0 bg-transparent"
+    ></mat-paginator>
   </div>
 </div>
