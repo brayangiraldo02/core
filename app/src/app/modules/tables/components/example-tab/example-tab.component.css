@@ -1,1 +1,4 @@
-/* Example tab styles */
+/* Estilos específicos para la tabla de ejemplo */
+table {
+  width: 100%;
+}

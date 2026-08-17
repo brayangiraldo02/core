@@ -3,7 +3,7 @@
     <div>
       <h2 class="text-2xl font-bold text-slate-700">Tablas y Catálogos de Muestra</h2>
       <p class="text-slate-500 text-sm">
-        Ejemplos funcionales con paginación, filtros, modales y exportación a PDF
+        Ejemplos funcionales con paginación, filtros y modales conectados a la API
       </p>
     </div>
 
@@ -11,24 +11,19 @@
       <button
         mat-flat-button
         color="primary"
-        (click)="downloadCurrentTabPdf()"
-        [disabled]="isDownloadingPdf()"
-        class="h-11! px-4! rounded-xl! shadow-sm"
+        routerLink="/reportes"
+        class="h-10! rounded-xl! shadow-sm"
+        matTooltip="Ir al módulo independiente de reportes PDF"
       >
         <div class="flex items-center gap-2">
-          @if (isDownloadingPdf()) {
-            <mat-spinner diameter="18" class="text-white"></mat-spinner>
-            <span>Generando...</span>
-          } @else {
-            <mat-icon>picture_as_pdf</mat-icon>
-            <span>Descargar Reporte PDF</span>
-          }
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>Generar Reportes PDF</span>
         </div>
       </button>
     </div>
   </div>
 
-  <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+  <mat-tab-group>
     <mat-tab label="Vehículos">
       <ng-template matTabContent>
         <div class="mt-6">
@@ -49,14 +44,6 @@
       <ng-template matTabContent>
         <div class="mt-6">
           <app-inventory></app-inventory>
-        </div>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Plantilla Extra (PDF)">
-      <ng-template matTabContent>
-        <div class="mt-6">
-          <app-example-tab></app-example-tab>
         </div>
       </ng-template>
     </mat-tab>
