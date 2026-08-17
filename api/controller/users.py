@@ -110,7 +110,12 @@ async def refresh_access_token(refresh_token: str):
             "nombre": user_data.get("nombre", "")
         }
         new_access_token = create_access_token(new_payload)
+        new_refresh_token = create_refresh_token(new_payload)
 
-        return {"access_token": new_access_token, "status_code": 200}
+        return {
+            "access_token": new_access_token,
+            "new_refresh_token": new_refresh_token,
+            "status_code": 200
+        }
     except Exception as e:
         return {"error": str(e), "status_code": 500}

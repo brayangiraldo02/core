@@ -1,29 +1,28 @@
 import jwt
 import datetime
 from typing import Dict
-from dotenv import load_dotenv
-import os
+from config.settings import settings
 
-load_dotenv()
-
-SECRET_KEY = os.getenv('SECRET_KEY_JWT')
-REFRESH_SECRET_KEY = os.getenv('SECRET_KEY_REFRESH')
+SECRET_KEY = settings.SECRET_KEY_JWT
+REFRESH_SECRET_KEY = settings.SECRET_KEY_REFRESH
 ALGORITHM = "HS256"
 
 def create_access_token(data: Dict) -> str:
     payload = data.copy()
+    now = datetime.datetime.now(datetime.timezone.utc)
     payload.update({
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10),
-        "iat": datetime.datetime.utcnow(),
+        "exp": now + datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "iat": now,
         "type": "access"
     })
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 def create_refresh_token(data: Dict) -> str:
     payload = data.copy()
+    now = datetime.datetime.now(datetime.timezone.utc)
     payload.update({
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=600),
-        "iat": datetime.datetime.utcnow(),
+        "exp": now + datetime.timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),
+        "iat": now,
         "type": "refresh"
     })
     return jwt.encode(payload, REFRESH_SECRET_KEY, algorithm=ALGORITHM)
