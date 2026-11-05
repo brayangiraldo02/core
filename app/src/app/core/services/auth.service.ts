@@ -5,9 +5,7 @@ import { Observable, tap, catchError, throwError, switchMap } from 'rxjs';
 import { URLBASE } from '../../../environments/environment';
 
 export interface User {
-  id?: string;
   name: string;
-  role?: string;
 }
 
 export interface LoginResponse {
@@ -38,7 +36,14 @@ export class AuthService {
 
   get user(): User | null {
     const userStr = sessionStorage.getItem(this.USER_KEY);
-    return userStr ? JSON.parse(userStr) : null;
+    if (!userStr) {
+      return null;
+    }
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
   }
 
   get isAuthenticated(): boolean {
@@ -59,7 +64,7 @@ export class AuthService {
     sessionStorage.setItem(this.ACCESS_TOKEN_KEY, token);
   }
 
-  private clearSession(): void {
+  clearSession(): void {
     sessionStorage.removeItem(this.ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
   }
@@ -103,14 +108,11 @@ export class AuthService {
   }
 
   logout(): void {
+    this.clearSession();
+    this.router.navigate(['/login']);
     this.http
       .post(`${URLBASE}/users/logout`, {}, { withCredentials: true })
       .pipe(catchError(() => []))
-      .subscribe({
-        complete: () => {
-          this.clearSession();
-          this.router.navigate(['/login']);
-        },
-      });
+      .subscribe();
   }
 }
