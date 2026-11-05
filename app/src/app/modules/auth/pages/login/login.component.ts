@@ -46,10 +46,7 @@ export class LoginComponent {
         next: () => {
           this.router.navigate(['/dashboard']);
         },
-        error: (error) => {
-          const message = error.error?.detail || error.error?.message || 'Error al iniciar sesión';
-          this.snackbarService.error(message);
-        },
+        error: () => {},
       });
   }
 }

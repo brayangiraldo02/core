@@ -40,7 +40,6 @@ export class PdfGeneratorViewComponent {
         },
         error: (err) => {
           console.error('Error al generar PDF:', err);
-          this.snackbarService.error('Error al generar el PDF.');
         },
       });
   }
