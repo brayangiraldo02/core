@@ -31,24 +31,24 @@ def decode_access_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         if not isinstance(payload, dict):
-            return {"error": "Invalid token"}
+            return {"error": "Token inválido"}
         if payload.get("type") != "access":
-            return {"error": "Invalid token"}
+            return {"error": "Token inválido"}
         return payload
     except jwt.ExpiredSignatureError:
-        return {"error": "Token expired"}
+        return {"error": "Token expirado"}
     except (jwt.PyJWTError, TypeError, ValueError, Exception):
-        return {"error": "Invalid token"}
+        return {"error": "Token inválido"}
 
 def decode_refresh_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
         if not isinstance(payload, dict):
-            return {"error": "Invalid token"}
+            return {"error": "Token inválido"}
         if payload.get("type") != "refresh":
-            return {"error": "Invalid token"}
+            return {"error": "Token inválido"}
         return payload
     except jwt.ExpiredSignatureError:
-        return {"error": "Token expired"}
+        return {"error": "Token expirado"}
     except (jwt.PyJWTError, TypeError, ValueError, Exception):
-        return {"error": "Invalid token"}
+        return {"error": "Token inválido"}
