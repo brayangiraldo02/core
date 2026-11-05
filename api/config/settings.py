@@ -2,15 +2,16 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    SECRET_KEY_JWT: str = "clave_secreta_jwt_core_default_dev_123456"
-    SECRET_KEY_REFRESH: str = "clave_secreta_refresh_core_default_dev_123456"
+    SECRET_KEY_JWT: str
+    SECRET_KEY_REFRESH: str
 
     # Configuración de Cookies de Seguridad
-    COOKIE_SECURE: bool = False  # True en producción con HTTPS
-    COOKIE_SAMESITE: str = "lax"
-    COOKIE_PATH: str = "/users"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 600  # 10 horas
+    # Valores obligatorios, se leen desde el archivo .env
+    COOKIE_SECURE: bool  # True en producción con HTTPS
+    COOKIE_SAMESITE: str
+    COOKIE_PATH: str
+    ACCESS_TOKEN_EXPIRE_SECONDS: int
+    REFRESH_TOKEN_EXPIRE_MINUTES: int
 
     DB_TYPE: Optional[str] = "mysql+pymysql"
     DB_USER: Optional[str] = "root"
