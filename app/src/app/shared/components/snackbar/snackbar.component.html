@@ -1,0 +1,41 @@
+<div
+  class="flex items-start gap-3 bg-white rounded-xl py-2.5 px-3.5 sm:py-3 sm:px-4 box-border w-full min-w-0 sm:min-w-[420px] max-w-full sm:max-w-[560px] shadow-lg select-none border font-['Montserrat',sans-serif]"
+  [ngClass]="borderClass"
+  role="alert"
+>
+  <!-- Pastel Icon Box (36x36px, radius 10px) -->
+  <div
+    class="w-9 h-9 min-w-9 min-h-9 rounded-[10px] flex items-center justify-center shrink-0"
+    [ngClass]="iconBoxClass"
+  >
+    <mat-icon class="text-[20px]! w-5! h-5! flex items-center justify-center leading-none">{{
+      iconName
+    }}</mat-icon>
+  </div>
+
+  <!-- Text Container (Title + Message) -->
+  <div class="flex flex-col gap-0.5 flex-auto min-w-0 pt-0.5">
+    <h4
+      *ngIf="data?.title"
+      class="m-0 text-sm font-bold text-slate-900 leading-tight tracking-[-0.2px]"
+    >
+      {{ data?.title }}
+    </h4>
+    <p class="m-0 text-[13px] font-medium text-slate-700 leading-snug break-words">
+      {{ data?.message }}
+    </p>
+  </div>
+
+  <!-- Close Button (28x28px, 18px close icon) -->
+  <button
+    type="button"
+    class="inline-flex items-center justify-center w-7 h-7 min-w-7 min-h-7 p-0 border-0 bg-transparent text-slate-500 rounded-md cursor-pointer shrink-0 ml-0.5 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+    (click)="close()"
+    matTooltip="Cerrar"
+    aria-label="Cerrar notificación"
+  >
+    <mat-icon class="text-[18px]! w-[18px]! h-[18px]! flex items-center justify-center leading-none"
+      >close</mat-icon
+    >
+  </button>
+</div>

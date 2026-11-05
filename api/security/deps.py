@@ -18,12 +18,12 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Token inválido",
             headers={"WWW-Authenticate": "Bearer"}
         )
 
     if not isinstance(payload, dict) or "error" in payload:
-        error_detail = payload.get("error", "Invalid token") if isinstance(payload, dict) else "Invalid token"
+        error_detail = payload.get("error", "Token inválido") if isinstance(payload, dict) else "Token inválido"
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=error_detail,

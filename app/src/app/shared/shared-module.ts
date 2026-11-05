@@ -18,9 +18,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [SnackbarComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -41,6 +43,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatSelectModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
   ],
   exports: [
     MatIconModule,
@@ -61,6 +64,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatSelectModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
+    SnackbarComponent,
   ],
 })
 export class SharedModule {}

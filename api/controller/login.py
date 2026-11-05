@@ -25,9 +25,9 @@ async def process_login(data: LoginRequest, response: Response, db: Session = No
         mock_user = next((u for u in MOCK_USERS if u["username"] == data.username or u["id"] == data.username), None)
         if mock_user:
             if not mock_user.get("active", True):
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Usuario inactivo")
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Usuario o contraseña inválidos")
             if mock_user["password"] != data.password:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Contraseña incorrecta")
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario o contraseña inválidos")
 
             # Minimización de claims: estrictamente {"codigo": user_id}
             user_data_payload = {"codigo": mock_user["id"]}
@@ -57,11 +57,11 @@ async def process_login(data: LoginRequest, response: Response, db: Session = No
                 user = db.query(Usuarios).filter(Usuarios.CODIGO == data.username).first()
                 if user:
                     if user.ESTADO == 0:
-                        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Usuario inactivo")
+                        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Usuario o contraseña inválidos")
                     
                     user_password = user.CONTRASEÑA.strip() if hasattr(user.CONTRASEÑA, 'strip') else user.CONTRASEÑA
                     if user_password != data.password:
-                        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Contraseña incorrecta")
+                        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario o contraseña inválidos")
 
                     user_code = user.CODIGO.strip() if hasattr(user.CODIGO, 'strip') else user.CODIGO
                     user_data_payload = {"codigo": user_code}
@@ -130,7 +130,7 @@ async def refresh_access_token(
             headers = _clear_refresh_cookie(response)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token payload",
+                detail="Carga útil del token inválida",
                 headers=headers
             )
 

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError, switchMap } from 'rxjs';
 import { URLBASE } from '../../../environments/environment';
+import { ErrorHandlerService, RequestOptions } from './error-handler.service';
 
 export interface User {
   name: string;
@@ -27,6 +28,7 @@ export class AuthService {
 
   private http = inject(HttpClient);
   private router = inject(Router);
+  private errorHandlerService = inject(ErrorHandlerService);
 
   // ---- Getters ----
 
@@ -71,7 +73,7 @@ export class AuthService {
 
   // ---- API Methods ----
 
-  login(username: string, password: string): Observable<User> {
+  login(username: string, password: string, options?: RequestOptions): Observable<User> {
     return this.http
       .post<LoginResponse>(
         `${URLBASE}/users/login`,
@@ -84,9 +86,7 @@ export class AuthService {
           return this.getUserInfo();
         }),
         tap((user) => this.saveUser(user)),
-        catchError((error) => {
-          return throwError(() => error);
-        }),
+        catchError((error) => this.errorHandlerService.handleError(error, options)),
       );
   }
 

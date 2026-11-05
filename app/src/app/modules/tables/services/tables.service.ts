@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
+import { RequestOptions } from '../../../core/services/error-handler.service';
 import { VehiclesResponse } from '../interfaces/vehicles-table.interface';
 import { OwnersResponse, OwnerBasicInfoResponse } from '../interfaces/owners-table.interface';
 import { InventoryResponse } from '../interfaces/inventory-table.interface';
@@ -16,12 +17,15 @@ export class TablesService {
   private ownersCache: TableCache<OwnersResponse> | null = null;
   private inventoryCache: TableCache<InventoryResponse> | null = null;
 
-  getOwnerBasicInfo(ownerId: string): Observable<OwnerBasicInfoResponse> {
-    return this.apiService.get<OwnerBasicInfoResponse>(`/tables/owners/basic-info/${ownerId}`);
+  getOwnerBasicInfo(ownerId: string, options?: RequestOptions): Observable<OwnerBasicInfoResponse> {
+    return this.apiService.get<OwnerBasicInfoResponse>(
+      `/tables/owners/basic-info/${ownerId}`,
+      options,
+    );
   }
 
-  downloadReportPdf(entity: string = 'vehicles'): Observable<Blob> {
-    return this.apiService.getBlob(`/reports/sample-pdf?entity=${entity}`);
+  downloadReportPdf(entity: string = 'vehicles', options?: RequestOptions): Observable<Blob> {
+    return this.apiService.getBlob(`/reports/sample-pdf?entity=${entity}`, options);
   }
 
   hasValidVehiclesCache(page: number, size: number, search: string = ''): boolean {
@@ -38,17 +42,22 @@ export class TablesService {
     size: number,
     search: string = '',
     forceRefresh: boolean = false,
+    options?: RequestOptions,
   ): Observable<VehiclesResponse> {
     if (!forceRefresh && this.hasValidVehiclesCache(page, size, search)) {
       return of(this.vehiclesCache!.data);
     }
 
     return this.apiService
-      .post<VehiclesResponse>('/tables/vehicles', {
-        page_number: page,
-        page_size: size,
-        search: search,
-      })
+      .post<VehiclesResponse>(
+        '/tables/vehicles',
+        {
+          page_number: page,
+          page_size: size,
+          search: search,
+        },
+        options,
+      )
       .pipe(
         tap((res) => {
           this.vehiclesCache = { page, size, search, data: res };
@@ -70,17 +79,22 @@ export class TablesService {
     size: number,
     search: string = '',
     forceRefresh: boolean = false,
+    options?: RequestOptions,
   ): Observable<OwnersResponse> {
     if (!forceRefresh && this.hasValidOwnersCache(page, size, search)) {
       return of(this.ownersCache!.data);
     }
 
     return this.apiService
-      .post<OwnersResponse>('/tables/owners', {
-        page_number: page,
-        page_size: size,
-        search: search,
-      })
+      .post<OwnersResponse>(
+        '/tables/owners',
+        {
+          page_number: page,
+          page_size: size,
+          search: search,
+        },
+        options,
+      )
       .pipe(
         tap((res) => {
           this.ownersCache = { page, size, search, data: res };
@@ -102,17 +116,22 @@ export class TablesService {
     size: number,
     search: string = '',
     forceRefresh: boolean = false,
+    options?: RequestOptions,
   ): Observable<InventoryResponse> {
     if (!forceRefresh && this.hasValidInventoryCache(page, size, search)) {
       return of(this.inventoryCache!.data);
     }
 
     return this.apiService
-      .post<InventoryResponse>('/tables/inventory', {
-        page_number: page,
-        page_size: size,
-        search: search,
-      })
+      .post<InventoryResponse>(
+        '/tables/inventory',
+        {
+          page_number: page,
+          page_size: size,
+          search: search,
+        },
+        options,
+      )
       .pipe(
         tap((res) => {
           this.inventoryCache = { page, size, search, data: res };
