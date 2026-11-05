@@ -48,7 +48,7 @@ export class LoginComponent {
         },
         error: (error) => {
           const message = error.error?.detail || error.error?.message || 'Error al iniciar sesión';
-          this.snackbarService.openSnackBar(message);
+          this.snackbarService.error(message);
         },
       });
   }

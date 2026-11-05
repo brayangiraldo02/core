@@ -17,7 +17,7 @@ export class PdfGeneratorViewComponent {
 
   generatePdf(entity: string): void {
     this.loadingEntity.set(entity);
-    this.snackbarService.openSnackBar(`Generando reporte de ${entity}...`);
+    this.snackbarService.info(`Generando reporte de ${entity}...`);
 
     this.tablesService
       .downloadReportPdf(entity)
@@ -36,11 +36,11 @@ export class PdfGeneratorViewComponent {
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          this.snackbarService.openSnackBar('¡Reporte generado con éxito!');
+          this.snackbarService.success('¡Reporte generado con éxito!');
         },
         error: (err) => {
           console.error('Error al generar PDF:', err);
-          this.snackbarService.openSnackBar('Error al generar el PDF.');
+          this.snackbarService.error('Error al generar el PDF.');
         },
       });
   }
