@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from routes.login import login_router
 from routes.users import users_router
 from routes.tables import tables_router
 from routes.reports import reports_router
@@ -40,13 +41,14 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={
             "message": "Error interno del servidor",
-            "error_type": type(exc).__name__,
-            "details": str(exc)
+            "error_type": "InternalServerError",
+            "details": "Error interno del servidor"
         },
     )
 
 # Routers
-app.include_router(users_router, prefix="/users")
+app.include_router(login_router, prefix="/users")
+app.include_router(users_router, prefix="/users", dependencies=[Depends(get_current_user)])
 app.include_router(tables_router, prefix="/tables", dependencies=[Depends(get_current_user)])
 app.include_router(reports_router, prefix="/reports", dependencies=[Depends(get_current_user)])
 

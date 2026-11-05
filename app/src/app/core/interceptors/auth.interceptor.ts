@@ -4,7 +4,7 @@ import { BehaviorSubject, catchError, filter, finalize, switchMap, take, throwEr
 import { AuthService } from '../services/auth.service';
 
 let isRefreshing = false;
-const refreshTokenSubject = new BehaviorSubject<string | null>(null);
+let refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -25,6 +25,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(requestToForward).pipe(
     catchError((error: HttpErrorResponse) => {
+      // 401 sin ningún token guardado: no hay nada que refrescar, se cierra sesión
+      if (error.status === 401 && !isAuthRoute && !authService.accessToken) {
+        authService.logout();
+        return throwError(() => error);
+      }
+
       // Manejar 401 en peticiones de negocio autenticadas
       if (error.status === 401 && !isAuthRoute && authService.accessToken) {
         if (!isRefreshing) {
@@ -42,10 +48,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             }),
             catchError((refreshError) => {
               authService.logout();
+              refreshTokenSubject.error(refreshError);
               return throwError(() => refreshError);
             }),
             finalize(() => {
               isRefreshing = false;
+              refreshTokenSubject = new BehaviorSubject<string | null>(null);
             }),
           );
         } else {

@@ -11,7 +11,7 @@ def create_access_token(data: Dict) -> str:
     payload = data.copy()
     now = datetime.datetime.now(datetime.timezone.utc)
     payload.update({
-        "exp": now + datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "exp": now + datetime.timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS),
         "iat": now,
         "type": "access"
     })
@@ -29,16 +29,26 @@ def create_refresh_token(data: Dict) -> str:
 
 def decode_access_token(token: str) -> dict:
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if not isinstance(payload, dict):
+            return {"error": "Invalid token"}
+        if payload.get("type") != "access":
+            return {"error": "Invalid token"}
+        return payload
     except jwt.ExpiredSignatureError:
         return {"error": "Token expired"}
-    except jwt.InvalidTokenError:
+    except (jwt.PyJWTError, TypeError, ValueError, Exception):
         return {"error": "Invalid token"}
 
 def decode_refresh_token(token: str) -> dict:
     try:
-        return jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
+        if not isinstance(payload, dict):
+            return {"error": "Invalid token"}
+        if payload.get("type") != "refresh":
+            return {"error": "Invalid token"}
+        return payload
     except jwt.ExpiredSignatureError:
         return {"error": "Token expired"}
-    except jwt.InvalidTokenError:
+    except (jwt.PyJWTError, TypeError, ValueError, Exception):
         return {"error": "Invalid token"}
